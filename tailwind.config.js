@@ -7,7 +7,12 @@ module.exports = {
         "node_modules/preline/dist/*.js",
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                gris: "#3f4447",
+                verde: "#00b588",
+            },
+        },
     },
     plugins: [require("preline/plugin")],
 };
