@@ -1,0 +1,62 @@
+version: "3.7"
+services:
+    app:
+        build:
+            args:
+                user: admin
+                uid: 1000
+            context: ./
+            dockerfile: docker/app/Dockerfile
+        image: revolteira
+        container_name: revolteira-app
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+            - ./docker/app/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - revolteira
+
+    db:
+        image: mysql:5.5
+        container_name: revolteira-db
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - ./db:/var/lib/mysql
+        networks:
+            - revolteira
+
+    nginx:
+        image: nginx:alpine
+        container_name: revolteira-nginx
+        ports:
+            - 8000:80
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/local.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - revolteira
+
+    supervisor:
+        build:
+            context: ./
+            dockerfile: docker/supervisor/Dockerfile
+        container_name: revolteira-supervisor
+        volumes:
+            - ./:/var/www
+        networks:
+            - revolteira
+        depends_on:
+            - app
+            - nginx
+
+networks:
+    revolteira:
+        driver: bridge
