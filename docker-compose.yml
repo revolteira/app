@@ -17,7 +17,7 @@ services:
             - revolteira
 
     db:
-        image: mysql:5.5
+        image: mysql:8.2
         container_name: revolteira-db
         ports:
             - 3306:3306
