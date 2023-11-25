@@ -12,14 +12,19 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const ROL_ADMIN = 'admin';
+    const ROL_SOCIA = 'socia';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'nome',
         'email',
+        'dni',
+        'rol',
         'password',
     ];
 
