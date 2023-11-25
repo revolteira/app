@@ -1,10 +1,23 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Link, Head, router } from '@inertiajs/vue3';
+import { ref } from "vue";
+import { watch } from "vue";
 
 import Pagination from '@/Components/Pagination.vue';
 
-defineProps({ users: Array })
+defineProps({ users: Array });
+
+let termo = ref('');
+watch(termo, (valor) => {
+    router.get(
+        "/users",
+        { termo: valor },
+        {
+            preserveState: true,
+        }
+    );
+}); 
 </script>
 
 <template>
@@ -26,11 +39,10 @@ defineProps({ users: Array })
                                     class="border rounded-lg divide-y divide-gray-200 dark:border-gray-700 dark:divide-gray-700">
                                     <div class="py-3 px-4">
                                         <div class="relative max-w-xs">
-                                            <label class="sr-only">Search</label>
-                                            <input type="text" name="hs-table-with-pagination-search"
+                                            <input type="text" name="hs-table-with-pagination-search" v-model="termo"
                                                 id="hs-table-with-pagination-search"
                                                 class="py-2 px-3 ps-9 block w-full border-gray-200 shadow-sm rounded-lg text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-                                                placeholder="Search for items">
+                                                placeholder="Buscar socia">
                                             <div
                                                 class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-3">
                                                 <svg class="h-4 w-4 text-gray-400" xmlns="http://www.w3.org/2000/svg"
@@ -49,20 +61,34 @@ defineProps({ users: Array })
                                                 <tr>
                                                     <th scope="col"
                                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                        # socia</th>
+                                                    <th scope="col"
+                                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
                                                         Nome</th>
                                                     <th scope="col"
                                                         class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
-                                                        Email</th>
+                                                        DNI</th>
+                                                    <th scope="col"
+                                                        class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                                 <tr v-for="user in users.data" :key="user.id">
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
-                                                        {{ user.name }}</td>
+                                                        {{ user.num_socia }}</td>
+                                                    <td
+                                                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800 dark:text-gray-200">
+                                                        {{ user.nome }}</td>
                                                     <td
                                                         class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                                        {{ user.email }}</td>
+                                                        {{ user.dni }}</td>
+                                                    <td>
+                                                        <Link :href="route('users.edit', user.id)"
+                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                        Editar</Link>
+                                                    </td>
                                                 </tr>
                                             </tbody>
                                         </table>
