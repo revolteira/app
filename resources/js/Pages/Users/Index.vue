@@ -25,7 +25,7 @@ watch(termo, (valor) => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Socias</h2>
+            <h2 class="font-semibold text-xl text-gris leading-tight">Socias</h2>
         </template>
 
         <div class="py-12">
@@ -86,7 +86,7 @@ watch(termo, (valor) => {
                                                         {{ user.dni }}</td>
                                                     <td>
                                                         <Link :href="route('users.edit', user.id)"
-                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-blue-600 hover:text-blue-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                                                            class="inline-flex items-center gap-x-2 text-sm font-semibold rounded-lg border border-transparent text-verde hover:text-green-800 disabled:opacity-50 disabled:pointer-events-none dark:text-blue-500 dark:hover:text-blue-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
                                                         Editar</Link>
                                                     </td>
                                                 </tr>
