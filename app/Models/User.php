@@ -24,6 +24,7 @@ class User extends Authenticatable
         'nome',
         'email',
         'dni',
+        'num_socia',
         'rol',
         'password',
     ];

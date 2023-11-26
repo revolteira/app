@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
+
+use App\Http\Requests\UserUpdateRequest;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -61,15 +65,21 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        //
+        return Inertia::render('Users/Edit', [
+            'user' => $user
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(UserUpdateRequest $request, User $user): RedirectResponse
     {
-        //
+        $user->fill($request->validated());
+
+        $user->save();
+
+        return Redirect::route('users.index');
     }
 
     /**
