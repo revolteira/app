@@ -19,8 +19,8 @@ class UserController extends Controller
     {
         return Inertia::render('Users/Index', [
             'users' => User::when($request->termo, function ($query, $termo) {
-                $query->where('nome', 'like', '%' . $termo . '%')
-                    ->OrWhere('dni', 'like', '%' . $termo . '%');
+                $query->whereBlind('nome', 'nome_index', $termo)
+                    ->OrWhereBlind('dni', 'dni_index', $termo);
             })
                 ->orderBy('num_socia')
                 ->paginate(
