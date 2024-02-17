@@ -1,0 +1,85 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: admin
+        uid: 1000
+      context: ./
+      dockerfile: docker/app/Dockerfile
+    image: revolteira
+    container_name: revolteira-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+      - ./docker/app/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - revolteira
+
+  db:
+    image: mysql:5.5
+    container_name: revolteira-db
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_NAME: mysql
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - revolteira
+
+  nginx:
+    image: nginx:alpine
+    container_name: revolteira-nginx
+    restart: unless-stopped
+    ports:
+      - 80:80
+      #- 443:443
+    volumes:
+      - ./:/var/www
+      - ./docker/nginx/pre_ssl.conf:/etc/nginx/conf.d/default.conf
+      #- ./docker/nginx/server.conf:/etc/nginx/conf.d/default.conf
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - ./dhparam:/etc/ssl/certs
+    networks:
+      - revolteira
+
+  supervisor:
+    build:
+      context: ./
+      dockerfile: docker/supervisor/Dockerfile
+    container_name: revolteira-supervisor
+    restart: unless-stopped
+    volumes:
+      - ./:/var/www
+    networks:
+      - revolteira
+    depends_on:
+      - app
+      - nginx
+
+  certbot:
+    image: certbot/certbot
+    container_name: revolteira-certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - ./:/var/www
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www --email ferramentas@revolteira.gal --agree-tos --no-eff-email --force-renewal -d app.revolteira.gal
+
+volumes:
+  certbot-etc:
+  certbot-var:
+
+networks:
+  revolteira:
+    driver: bridge
